@@ -19,6 +19,7 @@ namespace AutologinLoL
         private string kernelName = "rads_user_kernel";
         private string clientName = "LolClient";
         private Point loginInput = new Point(350, 320);
+        private Point playButton = new Point(700, 550);
 
         public Game(string baseDir)
         {
@@ -107,6 +108,7 @@ namespace AutologinLoL
                 {
                     return false;
                 }
+                Thread.Sleep(300);
                 for (int i = 0; i < 2; i++)
                     WinAPI.MouseClick(handle, loginInput.X, loginInput.Y);
                 string keys = String.Format("{0}{{TAB}}{1}{{ENTER}}", login, password);
@@ -125,5 +127,22 @@ namespace AutologinLoL
             WinAPI.KillProcess(clientName);
         }
 
+        public bool IsProcessesExist()
+        {
+            return !(WinAPI.FindProcess(launcherName) == null && WinAPI.FindProcess(kernelName) == null && WinAPI.FindProcess(clientName) == null);
+        }
+
+        public bool ClickPlay()
+        {
+            Process process = WinAPI.FindProcess(launcherName);
+            if (process != null && process.Responding && process.MainWindowHandle != IntPtr.Zero && !String.IsNullOrEmpty(process.MainWindowTitle))
+            {
+                IntPtr handle = process.MainWindowHandle;
+                WinAPI.MouseClick(handle, playButton.X, playButton.Y);
+                return true;
+            }
+            return false;
+
+        }
     }
 }
