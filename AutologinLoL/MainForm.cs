@@ -18,7 +18,7 @@ namespace AutologinLoL
     public partial class MainForm : Form
     {
         public List<Account> accounts = new List<Account>();
-        public Game game = new Game(@"C:\Games\League of Legends");//Application.StartupPath);
+        public Game game = new Game(Application.StartupPath);
         private string settingsPath = Path.Combine(Application.StartupPath, "AutologinLoL.xml");
         XmlSerializer serializer = new XmlSerializer(typeof(List<Account>));
 
