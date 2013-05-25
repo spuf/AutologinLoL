@@ -28,11 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.accountBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            ((System.ComponentModel.ISupportInitialize)(this.accountBindingSource)).BeginInit();
+            this.loginWorker = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
+            // 
+            // loginWorker
+            // 
+            this.loginWorker.WorkerSupportsCancellation = true;
+            this.loginWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.loginWorker_DoWork);
+            this.loginWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.loginWorker_RunWorkerCompleted);
             // 
             // MainForm
             // 
@@ -49,14 +53,14 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "AutologinLoL - spuf.ru";
             this.Load += new System.EventHandler(this.MainForm_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.accountBindingSource)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.BindingSource accountBindingSource;
+        private System.ComponentModel.BackgroundWorker loginWorker;
+
     }
 }
 

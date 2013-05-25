@@ -8,19 +8,19 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 
 namespace AutologinLoL
 {
-   public partial class MainForm : Form
+    public partial class MainForm : Form
     {
         public List<Account> accounts = new List<Account>();
-        public Game game = new Game(Application.StartupPath);
+        public Game game = new Game(@"C:\Games\League of Legends");//Application.StartupPath);
         private string settingsPath = Path.Combine(Application.StartupPath, "AutologinLoL.xml");
         XmlSerializer serializer = new XmlSerializer(typeof(List<Account>));
-        private Timer timer;
 
         public MainForm()
         {
@@ -47,32 +47,74 @@ namespace AutologinLoL
                 button.Click += button_Click;
                 this.Controls.Add(button);
             }
+            if (accounts.Count == 1)
+            {
+                Button button = new Button();
+                button.Tag = accounts[0];
+                button_Click(button, null);
+            }
         }
 
         private void button_Click(object sender, EventArgs e)
         {
+            ToggleButtons(false);
             Account account = (Account)((Button)sender).Tag;
             if (game.SetConfig(account.Server, account.Locale))
             {
                 if (game.Start())
                 {
-                    if (timer != null)
-                    {
-                        timer.Stop();
-                        timer.Dispose();
-                    }
-                    timer = new Timer();
-                    timer.Interval = 500;
-                    timer.Tick += new EventHandler(delegate(object _sender, EventArgs _event)
-                    {
-                        if (game.Login(account.Login, account.Password))
-                        {
-                            this.Close();
-                        }
-                    });
-                    timer.Enabled = true;
+                    loginWorker.RunWorkerAsync(account);                    
                 }
-            }            
+            }             
+        }
+
+        private void ToggleButtons(bool state)
+        {
+            UseWaitCursor = state;
+            for (int i = 0; i < Controls.Count; i++)
+            {
+                if (Controls[i].GetType() == typeof(Button))
+                {
+                    (Controls[i] as Button).Enabled = state;
+                }
+            }
+        }
+
+        private void loginWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            Account account = (Account)e.Argument;
+            bool complete = false;
+            Thread.Sleep(300);
+            while (!complete)
+            {
+                if ((sender as BackgroundWorker).CancellationPending || !game.IsProcessesExist())
+                {
+                    e.Cancel = true;
+                    complete = true;
+                }
+                else
+                {
+                    Thread.Sleep(300);
+                    if (game.Login(account.Login, account.Password))
+                    {
+                        complete = true;
+                    }
+                    else
+                    {
+                        game.ClickPlay();
+                    }
+                    
+                }
+            }
+        }
+
+        private void loginWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            ToggleButtons(true); 
+            if (!e.Cancelled)
+            {
+                Close();
+            }
         }
 
     }
