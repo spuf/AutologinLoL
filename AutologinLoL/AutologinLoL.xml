@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<ArrayOfAccount xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Account>
+    <Server>euw</Server>
+    <Locale>en_gb</Locale>
+    <Login>cool_login</Login>
+    <Password>cool_password</Password>
+  </Account>
+  <Account>
+    <Server>ru</Server>
+    <Locale>ru_ru</Locale>
+    <Login>cool_login</Login>
+    <Password>cool_password</Password>
+  </Account>
+</ArrayOfAccount>
