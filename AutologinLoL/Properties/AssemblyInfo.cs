@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("AutologinLoL")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("League of Legends autologin tool")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("spuf.ru")]
 [assembly: AssemblyProduct("AutologinLoL")]
-[assembly: AssemblyCopyright("Copyright ©  2013")]
+[assembly: AssemblyCopyright("Arseniy Razin")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
