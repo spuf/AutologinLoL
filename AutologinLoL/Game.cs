@@ -108,7 +108,7 @@ namespace AutologinLoL
                 {
                     return false;
                 }
-                Thread.Sleep(300);
+                Thread.Sleep(500);
                 for (int i = 0; i < 2; i++)
                     WinAPI.MouseClick(handle, loginInput.X, loginInput.Y);
                 string keys = String.Format("{0}{{TAB}}{1}{{ENTER}}", login, password);
@@ -142,7 +142,6 @@ namespace AutologinLoL
                 return true;
             }
             return false;
-
         }
     }
 }
