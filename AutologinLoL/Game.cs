@@ -9,12 +9,19 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace AutologinLoL
 {
     public class Game
     {
         public readonly string BaseDir;
+        private readonly string[] registryPaths = new string[] 
+            {
+                @"HKEY_CURRENT_USER\Software\Classes\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS", 
+                @"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS",
+                @"HKEY_CLASSES_ROOT\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS", 
+            };
         private readonly string launcherName = "LoLLauncher";
         private readonly string kernelName = "rads_user_kernel";
         private readonly string clientName = "LolClient";
@@ -22,9 +29,23 @@ namespace AutologinLoL
         private readonly Point playButton = new Point(700, 550);
         private readonly Color loginColor = Color.FromArgb(242, 242, 243);
 
-        public Game(string baseDir)
+        public Game(string baseDir = "")
         {
             BaseDir = baseDir;
+            if (CheckBaseDir())
+                return;
+
+            foreach (var path in registryPaths)
+            {
+                var radsFolder = Registry.GetValue(path, "LocalRootFolder", "") as string;
+                baseDir = Path.GetDirectoryName(radsFolder);
+
+                BaseDir = baseDir;
+                if (CheckBaseDir())
+                    return;
+            }
+
+            throw new Exception("Couldn't find League of Legends install");
         }
 
         public string GetSystemCfg()
@@ -47,50 +68,33 @@ namespace AutologinLoL
             return Path.Combine(BaseDir, @"lol.launcher.exe");
         }
 
-        public bool SetConfig(string server, string locale)
+        public void SetConfig(string server, string locale)
         {
             string systemCfg = GetSystemCfg();
             string launcherCfg = GetLauncherCfg();
             string localeCfg = GetLocaleCfg();
-            if (File.Exists(systemCfg) && File.Exists(launcherCfg) && File.Exists(localeCfg))
-            {
-                string content;
 
-                content = File.ReadAllText(systemCfg);
-                content = Regex.Replace(content, "(Region = ).+$", String.Format("$1{0}", server.ToUpper()), RegexOptions.Multiline);
-                File.WriteAllText(systemCfg, content);
+            string content;
 
-                content = File.ReadAllText(launcherCfg);
-                content = Regex.Replace(content, "(airConfigProject = lol_air_client_config_).+$", String.Format("$1{0}", server), RegexOptions.Multiline);
-                File.WriteAllText(launcherCfg, content);
+            content = File.ReadAllText(systemCfg);
+            content = Regex.Replace(content, "(Region = ).+$", String.Format("$1{0}", server.ToUpper()), RegexOptions.Multiline);
+            File.WriteAllText(systemCfg, content);
 
-                content = File.ReadAllText(localeCfg);
-                content = Regex.Replace(content, "(locale = ).+$", String.Format("$1{0}", locale), RegexOptions.Multiline);
-                File.WriteAllText(localeCfg, content);
+            content = File.ReadAllText(launcherCfg);
+            content = Regex.Replace(content, "(airConfigProject = lol_air_client_config_).+$", String.Format("$1{0}", server), RegexOptions.Multiline);
+            File.WriteAllText(launcherCfg, content);
 
-                return true;
-            }
-            else
-            {
-                MessageBox.Show(String.Format("Not found LoL at path '{0}'!", BaseDir));
-            }
-            return false;
+            content = File.ReadAllText(localeCfg);
+            content = Regex.Replace(content, "(locale = ).+$", String.Format("$1{0}", locale), RegexOptions.Multiline);
+            File.WriteAllText(localeCfg, content);
         }
 
-        public bool Start()
+        public void Start()
         {
             string exePath = GetExePath();
-            if (File.Exists(exePath))
-            {
-                KillProcesses();
-                Process process = Process.Start(exePath);
-                return true;
-            }
-            else
-            {
-                MessageBox.Show(String.Format("Not found launcher at path '{0}'!", exePath));
-            }
-            return false;
+
+            KillProcesses();
+            Process process = Process.Start(exePath);
         }
 
         public bool Login(string login, string password)
@@ -143,6 +147,23 @@ namespace AutologinLoL
                 return true;
             }
             return false;
+        }
+
+        private bool CheckBaseDir()
+        { 
+            if (!File.Exists(GetExePath()))
+                return false;
+
+            if (!File.Exists(GetSystemCfg()))
+                return false;
+
+            if (!File.Exists(GetLauncherCfg()))
+                return false;
+
+            if (!File.Exists(GetLocaleCfg()))
+                return false;
+
+            return true;
         }
     }
 }
