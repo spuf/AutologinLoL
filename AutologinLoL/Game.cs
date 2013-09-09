@@ -14,12 +14,13 @@ namespace AutologinLoL
 {
     public class Game
     {
-        public string BaseDir;
-        private string launcherName = "LoLLauncher";
-        private string kernelName = "rads_user_kernel";
-        private string clientName = "LolClient";
-        private Point loginInput = new Point(350, 320);
-        private Point playButton = new Point(700, 550);
+        public readonly string BaseDir;
+        private readonly string launcherName = "LoLLauncher";
+        private readonly string kernelName = "rads_user_kernel";
+        private readonly string clientName = "LolClient";
+        private readonly Point loginInput = new Point(350, 300);
+        private readonly Point playButton = new Point(700, 550);
+        private readonly Color loginColor = Color.FromArgb(242, 242, 243);
 
         public Game(string baseDir)
         {
@@ -104,7 +105,7 @@ namespace AutologinLoL
                     WinAPI.ShowWindowAsync(handle, 1);
                     return false;
                 }
-                if (WinAPI.GetPixelColor(handle, loginInput.X, loginInput.Y) != Color.FromArgb(242, 242, 243))
+                if (WinAPI.GetPixelColor(handle, loginInput.X, loginInput.Y) != loginColor)
                 {
                     return false;
                 }
