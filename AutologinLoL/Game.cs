@@ -25,9 +25,9 @@ namespace AutologinLoL
         private readonly string launcherName = "LoLLauncher";
         private readonly string kernelName = "rads_user_kernel";
         private readonly string clientName = "LolClient";
-        private readonly Point loginInput = new Point(350, 300);
+        private readonly Point loginInput = new Point(350, 320);
         private readonly Point playButton = new Point(700, 550);
-        private readonly Color loginColor = Color.FromArgb(242, 242, 243);
+        private readonly Color loginColor = Color.FromArgb(243, 244, 245);
 
         public Game(string baseDir = "")
         {
