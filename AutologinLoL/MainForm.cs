@@ -18,13 +18,23 @@ namespace AutologinLoL
     public partial class MainForm : Form
     {
         public List<Account> accounts = new List<Account>();
-        public Game game = new Game(Application.StartupPath);
+        public Game game;
         private string settingsPath = Path.Combine(Application.StartupPath, "AutologinLoL.xml");
         XmlSerializer serializer = new XmlSerializer(typeof(List<Account>));
 
         public MainForm()
         {
             InitializeComponent();
+
+            try
+            {
+                game = new Game(Application.StartupPath);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Environment.Exit(1);
+            }
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -59,13 +69,10 @@ namespace AutologinLoL
         {
             ToggleButtons(false);
             Account account = (Account)((Button)sender).Tag;
-            if (game.SetConfig(account.Server, account.Locale))
-            {
-                if (game.Start())
-                {
-                    loginWorker.RunWorkerAsync(account);                    
-                }
-            }             
+            game.SetConfig(account.Server, account.Locale);
+            game.Start();
+
+            loginWorker.RunWorkerAsync(account);    
         }
 
         private void ToggleButtons(bool state)
