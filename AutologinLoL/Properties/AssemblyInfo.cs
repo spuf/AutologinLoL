@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("AutologinLoL")]
 [assembly: AssemblyDescription("League of Legends autologin tool")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("spuf.ru")]
+[assembly: AssemblyCompany("AutologinLoL")]
 [assembly: AssemblyProduct("AutologinLoL")]
-[assembly: AssemblyCopyright("Arseniy Razin")]
+[assembly: AssemblyCopyright("AutologinLoL")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
